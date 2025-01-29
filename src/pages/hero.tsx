@@ -6,7 +6,7 @@ import { BlurEffect } from '@/components/client/blur-effect'
 import { HeroContent } from '@/components/client/hero-content'
 import { Badge } from '@/components/ui/badge'
 
-export const HeroSection = () => {
+const HeroSection = () => {
     return (
         <div className="relative w-full overflow-hidden bg-gradient-to-b from-background to-background/95 h-screen flex justify-center items-center">
             <div className="absolute opacity-30 blur-sm hidden md:block">
@@ -60,3 +60,5 @@ export const HeroSection = () => {
         </div>
     )
 }
+
+export default HeroSection

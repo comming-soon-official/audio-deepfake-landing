@@ -1,7 +1,7 @@
 import { NavBar } from '@/components/internal/navbar'
 
 import Feature from '../pages/feature'
-import { HeroSection } from '../pages/hero'
+import HeroSection from '../pages/hero'
 
 import type { Metadata } from 'next'
 
