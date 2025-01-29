@@ -65,9 +65,7 @@ const DesignInput: React.FC<DesignInputProps> = ({
 
             toast({
                 title: 'Success! 🎉',
-                description:
-                    data.message ||
-                    'You have been added to the waitlist. Thank you!'
+                description: 'You have been added to the waitlist. Thank you!'
             })
 
             setEmail('')

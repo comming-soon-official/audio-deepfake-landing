@@ -4,8 +4,7 @@ import Parse from 'parse/node'
 // Initialize Parse
 Parse.initialize(
     process.env.NEXT_PUBLIC_PARSE_APP_ID!,
-    process.env.NEXT_PUBLIC_PARSE_JS_KEY!,
-    process.env.PARSE_MASTER_KEY
+    process.env.NEXT_PUBLIC_PARSE_JS_KEY!
 )
 
 // Set Parse Server URL
