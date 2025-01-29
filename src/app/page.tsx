@@ -1,10 +1,10 @@
 import { NavBar } from '@/components/internal/navbar'
+import { Toaster } from '@/components/ui/toaster'
 
 import Feature from '../pages/feature'
 import HeroSection from '../pages/hero'
 
 import type { Metadata } from 'next'
-
 export const metadata: Metadata = {
     title: 'AI Voice Authentication | Deepfake Detection',
     description:
@@ -45,6 +45,7 @@ export default function Page() {
                 <NavBar />
                 <HeroSection />
                 <Feature />
+                <Toaster />
             </main>
         </>
     )
