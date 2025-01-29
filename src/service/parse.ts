@@ -1,4 +1,3 @@
-'use client'
 import Parse from 'parse/node'
 
 // Initialize Parse
