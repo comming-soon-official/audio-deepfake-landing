@@ -2,10 +2,18 @@
 
 import DesignInput from '@/components/internal/design-input'
 
+import { Card } from '../ui/card'
+import { FileUpload } from '../ui/drag-upload'
+
 export function HeroContent() {
     return (
-        <div className="flex justify-center w-full">
-            <DesignInput />
-        </div>
+        <Card className="flex justify-center w-1/2 border-none">
+            <FileUpload
+                onChange={(files) => console.log(files)}
+                maxSize={5}
+                acceptedFileTypes={['image/*']}
+                className="my-4"
+            />{' '}
+        </Card>
     )
 }
