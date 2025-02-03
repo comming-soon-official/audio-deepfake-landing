@@ -1,4 +1,10 @@
-import { AlertCircle, Loader2, Upload, X } from 'lucide-react'
+import {
+    AlertCircle,
+    CheckCircle2,
+    Loader2,
+    Upload,
+    XCircle
+} from 'lucide-react'
 import React, { useRef, useState } from 'react'
 import { useDropzone } from 'react-dropzone'
 
@@ -39,10 +45,15 @@ export const FileUpload: React.FC<FileUploadProps> = ({
     const [file, setFile] = useState<File | null>(null)
     const [error, setError] = useState<string | null>(null)
     const [isLoading, setIsLoading] = useState(false)
+    const [result, setResult] = useState<{
+        isReal: boolean
+        accuracy: number
+    } | null>(null)
     const fileInputRef = useRef<HTMLInputElement>(null)
 
     const handleFile = async (selectedFile: File) => {
         setError(null)
+        setResult(null)
 
         if (!isAudioFile(selectedFile)) {
             setError(
@@ -57,14 +68,18 @@ export const FileUpload: React.FC<FileUploadProps> = ({
         }
 
         setIsLoading(true)
-        try {
-            setFile(selectedFile)
-            onChange?.([selectedFile])
-        } catch (err) {
-            setError('Error uploading file')
-        } finally {
+        setFile(selectedFile)
+        onChange?.([selectedFile])
+
+        // Simulate processing with timeout
+        setTimeout(() => {
             setIsLoading(false)
-        }
+            // Mock result - in real application, this would come from your API
+            setResult({
+                isReal: Math.random() > 0.5, // Random result for demonstration
+                accuracy: Math.floor(Math.random() * 20 + 80) // Random accuracy between 80-99%
+            })
+        }, 3000)
     }
 
     const onDrop = async (acceptedFiles: File[]) => {
@@ -121,17 +136,19 @@ export const FileUpload: React.FC<FileUploadProps> = ({
     }
 
     return (
-        <div className={cn('w-full max-w-md mx-auto', className)}>
+        <div className={cn('w-[1000px] max-w-md mx-auto', className)}>
             <div
                 {...getRootProps()}
                 onClick={handleClick}
                 className={cn(
-                    'relative p-6 border-2 border-dashed rounded-lg transition-all duration-200 ease-in-out cursor-pointer',
+                    'relative p-8 border-2 border-dashed rounded-xl transition-all duration-300',
+                    'backdrop-blur-sm bg-background/30',
                     isDragActive
-                        ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
-                        : 'border-gray-300 dark:border-gray-700',
-                    error ? 'border-red-500 bg-red-50 dark:bg-red-900/20' : '',
-                    'hover:border-blue-500'
+                        ? 'border-blue-500 bg-blue-50/10'
+                        : 'border-gray-300/50',
+                    error ? 'border-red-500 bg-red-50/10' : '',
+                    'hover:border-blue-500 group',
+                    'shadow-lg hover:shadow-2xl hover:scale-[1.02]'
                 )}
             >
                 <input
@@ -141,35 +158,39 @@ export const FileUpload: React.FC<FileUploadProps> = ({
                     ref={fileInputRef}
                     className="hidden"
                 />
+
                 {isLoading ? (
-                    <div className="text-center">
-                        <Loader2 className="mx-auto h-12 w-12 text-blue-500 animate-spin" />
-                        <p className="mt-2 text-sm text-gray-600 dark:text-gray-300">
-                            Processing...
+                    <div className="text-center py-8">
+                        <Loader2 className="mx-auto h-16 w-16 text-blue-500 animate-spin" />
+                        <p className="mt-4 text-lg font-medium text-gray-100">
+                            Analyzing Audio...
                         </p>
                     </div>
-                ) : file ? (
-                    <div className="bg-white dark:bg-gray-800 p-4 rounded-md shadow-sm">
-                        <div className="flex justify-between items-center">
-                            <div className="truncate max-w-[80%]">
-                                <p className="font-medium text-gray-700 dark:text-gray-200">
-                                    {file.name}
-                                </p>
-                                <p className="text-sm text-gray-500 dark:text-gray-400">
-                                    {(file.size / (1024 * 1024)).toFixed(2)} MB
-                                </p>
-                            </div>
-                            <button
-                                onClick={handleCancel}
-                                className="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors"
-                                aria-label="Remove file"
-                            >
-                                <X className="h-5 w-5 text-gray-500" />
-                            </button>
+                ) : result ? (
+                    <div className="text-center py-8 space-y-4">
+                        {result.isReal ? (
+                            <CheckCircle2 className="mx-auto h-16 w-16 text-green-500" />
+                        ) : (
+                            <XCircle className="mx-auto h-16 w-16 text-red-500" />
+                        )}
+                        <h3 className="text-2xl font-bold">
+                            {result.isReal ? 'Real Audio' : 'Fake Audio'}
+                        </h3>
+                        <div className="text-lg text-muted-foreground">
+                            Confidence:{' '}
+                            <span className="font-bold">
+                                {result.accuracy}%
+                            </span>
                         </div>
+                        <button
+                            onClick={handleCancel}
+                            className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+                        >
+                            Analyze Another File
+                        </button>
                     </div>
                 ) : (
-                    <div className="text-center">
+                    <div className="text-center space-y-4">
                         {error ? (
                             <div className="text-red-500 mb-4">
                                 <AlertCircle className="mx-auto h-12 w-12" />
@@ -181,23 +202,24 @@ export const FileUpload: React.FC<FileUploadProps> = ({
                             <>
                                 <Upload
                                     className={cn(
-                                        'mx-auto h-12 w-12 transition-colors',
+                                        'mx-auto h-16 w-16 transition-all duration-300',
+                                        'group-hover:scale-110 group-hover:-translate-y-1',
                                         isDragActive
                                             ? 'text-blue-500'
                                             : 'text-gray-400'
                                     )}
                                 />
-                                <p className="mt-2 text-sm font-medium text-gray-900 dark:text-gray-100">
+                                <p className="text-xl font-medium text-gray-100">
                                     {isDragActive
                                         ? 'Drop your file here'
-                                        : 'Upload a file'}
+                                        : 'Upload an audio file'}
                                 </p>
                             </>
                         )}
-                        <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                            Drag and drop or click to upload audio files
+                        <p className="text-sm text-muted-foreground">
+                            Drag and drop or click to upload
                         </p>
-                        <p className="mt-1 text-xs text-gray-400">
+                        <p className="text-xs text-muted-foreground">
                             Supported formats: MP3, WAV, OGG, AAC, WebM, M4A
                             (Max {maxSize}MB)
                         </p>
