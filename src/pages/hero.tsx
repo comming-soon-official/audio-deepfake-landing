@@ -1,7 +1,5 @@
 'use client'
 
-import Image from 'next/image'
-
 import { BlurEffect } from '@/components/client/blur-effect'
 import { HeroContent } from '@/components/client/hero-content'
 

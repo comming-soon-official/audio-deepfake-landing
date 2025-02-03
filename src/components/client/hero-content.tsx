@@ -1,7 +1,5 @@
 'use client'
 
-import DesignInput from '@/components/internal/design-input'
-
 import { Card } from '../ui/card'
 import { FileUpload } from '../ui/drag-upload'
 

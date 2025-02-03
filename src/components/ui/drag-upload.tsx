@@ -32,17 +32,17 @@ interface FileUploadProps {
 export const FileUpload: React.FC<FileUploadProps> = ({
     onChange,
     maxSize = 10,
-    acceptedFileTypes = [
-        'audio/mpeg', // .mp3
-        'audio/wav', // .wav
-        'audio/ogg', // .ogg
-        'audio/aac', // .aac
-        'audio/webm', // .webm
-        'audio/x-m4a' // .m4a
-    ],
+    // acceptedFileTypes = [
+    //     'audio/mpeg', // .mp3
+    //     'audio/wav', // .wav
+    //     'audio/ogg', // .ogg
+    //     'audio/aac', // .aac
+    //     'audio/webm', // .webm
+    //     'audio/x-m4a' // .m4a
+    // ],
     className
 }) => {
-    const [file, setFile] = useState<File | null>(null)
+    // const [file, setFile] = useState<File | null>(null)
     const [error, setError] = useState<string | null>(null)
     const [isLoading, setIsLoading] = useState(false)
     const [result, setResult] = useState<{
@@ -68,7 +68,7 @@ export const FileUpload: React.FC<FileUploadProps> = ({
         }
 
         setIsLoading(true)
-        setFile(selectedFile)
+        // setFile(selectedFile)
         onChange?.([selectedFile])
 
         // Simulate processing with timeout
@@ -97,7 +97,7 @@ export const FileUpload: React.FC<FileUploadProps> = ({
         }
     }
 
-    const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    const { getRootProps, isDragActive } = useDropzone({
         onDrop,
         multiple: false,
         accept: {
@@ -123,7 +123,7 @@ export const FileUpload: React.FC<FileUploadProps> = ({
 
     const handleCancel = (e: React.MouseEvent) => {
         e.stopPropagation()
-        setFile(null)
+        // setFile(null)
         setError(null)
         onChange?.([])
         if (fileInputRef.current) {
