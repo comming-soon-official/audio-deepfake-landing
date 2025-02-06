@@ -10,6 +10,15 @@ import { useDropzone } from 'react-dropzone'
 
 import { cn } from '@/lib/utils'
 
+const API_URL = 'http://98.70.57.33:5000/predict'
+
+interface APIResponse {
+    Deepfake_Prediction: string
+    filename: string
+    prediction: string
+    probability_fake: number
+}
+
 const isAudioFile = (file: File): boolean => {
     const audioTypes = [
         'audio/mpeg',
@@ -25,24 +34,14 @@ const isAudioFile = (file: File): boolean => {
 interface FileUploadProps {
     onChange?: (files: File[]) => void
     maxSize?: number
-    acceptedFileTypes?: string[]
     className?: string
 }
 
 export const FileUpload: React.FC<FileUploadProps> = ({
     onChange,
     maxSize = 10,
-    // acceptedFileTypes = [
-    //     'audio/mpeg', // .mp3
-    //     'audio/wav', // .wav
-    //     'audio/ogg', // .ogg
-    //     'audio/aac', // .aac
-    //     'audio/webm', // .webm
-    //     'audio/x-m4a' // .m4a
-    // ],
     className
 }) => {
-    // const [file, setFile] = useState<File | null>(null)
     const [error, setError] = useState<string | null>(null)
     const [isLoading, setIsLoading] = useState(false)
     const [result, setResult] = useState<{
@@ -50,6 +49,31 @@ export const FileUpload: React.FC<FileUploadProps> = ({
         accuracy: number
     } | null>(null)
     const fileInputRef = useRef<HTMLInputElement>(null)
+
+    const uploadToAPI = async (file: File) => {
+        const formData = new FormData()
+        formData.append('file', file)
+
+        try {
+            const response = await fetch(API_URL, {
+                method: 'POST',
+                body: formData
+            })
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`)
+            }
+
+            const data: APIResponse = await response.json()
+            return {
+                isReal: data.Deepfake_Prediction.toLowerCase() === 'false',
+                accuracy: data.probability_fake
+            }
+        } catch (error) {
+            console.log(error)
+            throw new Error('Failed to analyze audio. Please try again.')
+        }
+    }
 
     const handleFile = async (selectedFile: File) => {
         setError(null)
@@ -68,18 +92,18 @@ export const FileUpload: React.FC<FileUploadProps> = ({
         }
 
         setIsLoading(true)
-        // setFile(selectedFile)
         onChange?.([selectedFile])
 
-        // Simulate processing with timeout
-        setTimeout(() => {
+        try {
+            const apiResult = await uploadToAPI(selectedFile)
+            setResult(apiResult)
+        } catch (err) {
+            setError(
+                err instanceof Error ? err.message : 'An unknown error occurred'
+            )
+        } finally {
             setIsLoading(false)
-            // Mock result - in real application, this would come from your API
-            setResult({
-                isReal: Math.random() > 0.5, // Random result for demonstration
-                accuracy: Math.floor(Math.random() * 20 + 80) // Random accuracy between 80-99%
-            })
-        }, 3000)
+        }
     }
 
     const onDrop = async (acceptedFiles: File[]) => {
@@ -123,8 +147,8 @@ export const FileUpload: React.FC<FileUploadProps> = ({
 
     const handleCancel = (e: React.MouseEvent) => {
         e.stopPropagation()
-        // setFile(null)
         setError(null)
+        setResult(null)
         onChange?.([])
         if (fileInputRef.current) {
             fileInputRef.current.value = ''
@@ -179,7 +203,7 @@ export const FileUpload: React.FC<FileUploadProps> = ({
                         <div className="text-lg text-muted-foreground">
                             Confidence:{' '}
                             <span className="font-bold">
-                                {result.accuracy}%
+                                {result.accuracy.toFixed(2)}%
                             </span>
                         </div>
                         <button
