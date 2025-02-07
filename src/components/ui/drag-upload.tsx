@@ -233,7 +233,7 @@ export const FileUpload: React.FC<FileUploadProps> = ({
                                             : 'text-gray-400'
                                     )}
                                 />
-                                <p className="text-xl font-medium text-gray-100">
+                                <p className="text-xl font-medium ">
                                     {isDragActive
                                         ? 'Drop your file here'
                                         : 'Upload an audio file'}

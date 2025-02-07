@@ -1,4 +1,3 @@
-import { NavBar } from '@/components/internal/navbar'
 import { Toaster } from '@/components/ui/toaster'
 
 import Feature from '../pages/feature'
@@ -42,7 +41,6 @@ export default function Page() {
                 dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
             />
             <main className="relative min-h-screen">
-                <NavBar />
                 <HeroSection />
                 <Feature />
                 <Toaster />
